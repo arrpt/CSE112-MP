@@ -11,6 +11,6 @@ Written in C++
 
 ## Project Contributors
 - Arpit Rajput (2023133)
-- Ishaan Raj ()
-- Divyansh Kumar Gautam ()
-- Aryan Dutt ()
+- Ishaan Raj (2023248)
+- Divyansh Kumar Gautam (2023208)
+- Aryan Dutt (2023143)
