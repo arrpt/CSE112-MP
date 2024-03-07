@@ -15,7 +15,11 @@ int main(int argc, char *argv[]){
         cout << "Error reading input file. Check whether the name is correct" << endl;
         return 0;
     }
-    vector<char[32]> output;
-    map<string, int> labelTable;
+    vector<string> data;
+    string temp;
+    while (file >> temp){
+        data.push_back(temp);
+    }
+    
     return 0;
 }

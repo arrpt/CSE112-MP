@@ -18,7 +18,9 @@
 				"VisualStudioExptTeam.vscodeintellicode",
 				"VisualStudioExptTeam.intellicode-api-usage-examples",
 				"ms-vscode.makefile-tools",
-				"twxs.cmake"
+				"twxs.cmake",
+				"ms-python.python",
+				"ms-python.debugpy"
 			]
 		}
 	}
