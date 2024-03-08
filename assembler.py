@@ -141,11 +141,27 @@ abi2register = {
 
 f = open('test.s', 'r')
 data = f.readlines()
-output = []
+output = {}
+symTable = {}
+
+# REMOVING EMPTY LINES
+k = 0
+while k < len(data):
+    if data[k].isspace():
+        data.pop(k)
+    k += 1
+
+# CALCULATING LABEL ADDRESSES
+currAddress = 0
+for j in range(len(data)):
+    if data[j].strip()[-1] == ':':
+        symTable[data[j].strip()[:-1]] = currAddress
+
+currAddress = 0
 for i in range(len(data)):
     temp = re.sub(",", " ", data[i].lower())
     instruction = temp.split()
-    print(instruction)
+    #print(instruction)
     if len(instruction) > 4:
         print(f'ILLEGAL INSTRUCTION AT LINE {i+1}')
         sys.exit()
@@ -157,9 +173,11 @@ for i in range(len(data)):
                 rd = abi2register[instruction[1]]
                 rs1 = abi2register[instruction[2]]
                 rs2 = abi2register[instruction[3]]
-                output.append(R_add(rd, rs1, rs2))
+                output[currAddress] = R_add(rd, rs1, rs2)
+                currAddress += 4
             except Exception as e:
                 print(f'ERROR {e}')
+                sys.exit()
 
         case "sub":
             R_sub()
@@ -209,4 +227,4 @@ for i in range(len(data)):
 
 
 
-[print(x) for x in output]
+print(output)
