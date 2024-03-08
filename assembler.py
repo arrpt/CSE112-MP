@@ -5,6 +5,12 @@ import sys
 def registerSext(r):
     return ('0'*(5-len(bin(int(r[1:]))[2:])))+bin(int(r[1:]))[2:]
 
+def isLabel(dataline):
+    if dataline.strip()[-1] == ':':
+        return True
+    else:
+        return False
+
 def R_add(rd, rs1, rs2):
     funct7 = '0000000'
     funct3 = '000'
@@ -54,6 +60,22 @@ def R_and(rd, rs1, rs2):
     funct3 = '111'
     opcode = '0110011'
 
+def I_lw(rd, imm):
+    funct3 = '010'
+    opcode = '0000011'
+
+def I_addi(rd, rs1, imm):
+    funct3 = '000'
+    opcode = '0010011'
+
+def I_sltiu(rd, rs1, imm):
+    funct3 = '011'
+    opcode = '0010011'
+
+def I_jalr(rd, rs1, offset):
+    funct3 = '000'
+    opcode = '1100111'
+
 def S_sw(rs2, imm):
     funct3 = '010'
     opcode = '0100011'
@@ -90,6 +112,7 @@ def U_lui(rd, imm):
 
 def J_jal(rd, imm):
     opcode = '1101111'
+
 
 def Bonus_mul(rd, rs1, rs2):
     opcode = ''
@@ -153,15 +176,19 @@ while k < len(data):
 
 # CALCULATING LABEL ADDRESSES
 currAddress = 0
-for j in range(len(data)):
-    if data[j].strip()[-1] == ':':
+j = 0
+while j < len(data):
+    if isLabel(data[j]) == True:
         symTable[data[j].strip()[:-1]] = currAddress
+        data.pop(j)
+    j += 1
+    currAddress += 4
 
+# BUILDING BINARY
 currAddress = 0
 for i in range(len(data)):
     temp = re.sub(",", " ", data[i].lower())
     instruction = temp.split()
-    #print(instruction)
     if len(instruction) > 4:
         print(f'ILLEGAL INSTRUCTION AT LINE {i+1}')
         sys.exit()
@@ -195,6 +222,14 @@ for i in range(len(data)):
             R_or()
         case "and":
             R_and()
+        case "lw":
+            I_lw()
+        case "addi":
+            I_addi()
+        case "sltiu":
+            I_sltiu()
+        case "jalr":
+            I_jalr()
         case "sw":
             S_sw()
         case "beq":
@@ -214,7 +249,15 @@ for i in range(len(data)):
         case "lui":
             U_lui()
         case "jal":
-            J_jal()
+            try:
+                rd = abi2register[1]
+                imm = instruction[2]
+                output[currAddress] = J_jal(rd, imm)
+                currAddress += 4
+            except:
+                print(f'ERROR {e}')
+                sys.exit()
+    
         case "mul":
             Bonus_mul()
         case "halt":
@@ -226,5 +269,5 @@ for i in range(len(data)):
             sys.exit()
 
 
-
+print(symTable)
 print(output)

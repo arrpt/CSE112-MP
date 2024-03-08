@@ -4,7 +4,8 @@ Written in C++
 ## Assembler Roadmap
 - [x] Writing functions for all instructions
 - [x] Implementing reading a stdin (textfile)
-- [ ] Label Handling
+- [x] Label Handling
+- [ ] Check check
 - [ ] Output binary
 
 ## Simulator Roadmap
