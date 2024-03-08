@@ -24,41 +24,73 @@ def R_sub(rd, rs1, rs2):
     funct7 = '0100000'
     funct3 = '000'
     opcode = '0110011'
+    rd = registerSext(rd)
+    rs1 = registerSext(rs1)
+    rs2 = registerSext(rs2)
+    return funct7+rs2+rs1+funct3+rd+opcode
 
 def R_sll(rd, rs1, rs2):
     funct7 = '0000000'
     funct3 = '001'
     opcode = '0110011'
+    rd = registerSext(rd)
+    rs1 = registerSext(rs1)
+    rs2 = registerSext(rs2)
+    return funct7+rs2+rs1+funct3+rd+opcode
 
 def R_slt(rd, rs1, rs2):
     funct7 = '0000000'
     funct3 = '010'
     opcode = '0110011'
+    rd = registerSext(rd)
+    rs1 = registerSext(rs1)
+    rs2 = registerSext(rs2)
+    return funct7+rs2+rs1+funct3+rd+opcode
     
 def R_sltu(rd, rs1, rs2):
     funct7 = '0000000'
     funct3 = '011'
     opcode = '0110011'
+    rd = registerSext(rd)
+    rs1 = registerSext(rs1)
+    rs2 = registerSext(rs2)
+    return funct7+rs2+rs1+funct3+rd+opcode
 
 def R_xor(rd, rs1, rs2):
     funct7 = '0000000'
     funct3 = '100'
     opcode = '0110011'
+    rd = registerSext(rd)
+    rs1 = registerSext(rs1)
+    rs2 = registerSext(rs2)
+    return funct7+rs2+rs1+funct3+rd+opcode
 
 def R_srl(rd, rs1, rs2):
     funct7 = '0000000'
     funct3 = '101'
     opcode = '0110011'
+    rd = registerSext(rd)
+    rs1 = registerSext(rs1)
+    rs2 = registerSext(rs2)
+    return funct7+rs2+rs1+funct3+rd+opcode
 
 def R_or(rd, rs1, rs2):
     funct7 = '0000000'
     funct3 = '110'
     opcode = '0110011'
+    rd = registerSext(rd)
+    rs1 = registerSext(rs1)
+    rs2 = registerSext(rs2)
+    return funct7+rs2+rs1+funct3+rd+opcode
 
 def R_and(rd, rs1, rs2):
     funct7 = '0000000'
     funct3 = '111'
     opcode = '0110011'
+    rd = registerSext(rd)
+    rs1 = registerSext(rs1)
+    rs2 = registerSext(rs2)
+    return funct7+rs2+rs1+funct3+rd+opcode
 
 def I_lw(rd, imm):
     funct3 = '010'
@@ -207,21 +239,93 @@ for i in range(len(data)):
                 sys.exit()
 
         case "sub":
-            R_sub()
+            try:
+                rd = abi2register[instruction[1]]
+                rs1 = abi2register[instruction[2]]
+                rs2 = abi2register[instruction[3]]
+                output[currAddress] = R_sub(rd, rs1, rs2)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
+    
         case "sll":
-            R_sll()
+            try:
+                rd = abi2register[instruction[1]]
+                rs1 = abi2register[instruction[2]]
+                rs2 = abi2register[instruction[3]]
+                output[currAddress] = R_sll(rd, rs1, rs2)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
+
         case "slt":
-            R_slt()
+            try:
+                rd = abi2register[instruction[1]]
+                rs1 = abi2register[instruction[2]]
+                rs2 = abi2register[instruction[3]]
+                output[currAddress] = R_slt(rd, rs1, rs2)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
+
         case "sltu":
-            R_sltu()
+            try:
+                rd = abi2register[instruction[1]]
+                rs1 = abi2register[instruction[2]]
+                rs2 = abi2register[instruction[3]]
+                output[currAddress] = R_sltu(rd, rs1, rs2)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
+            
         case "xor":
-            R_xor()
+            try:
+                rd = abi2register[instruction[1]]
+                rs1 = abi2register[instruction[2]]
+                rs2 = abi2register[instruction[3]]
+                output[currAddress] = R_xor(rd, rs1, rs2)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
+
         case "srl":
-            R_srl()
+            try:
+                rd = abi2register[instruction[1]]
+                rs1 = abi2register[instruction[2]]
+                rs2 = abi2register[instruction[3]]
+                output[currAddress] = R_srl(rd, rs1, rs2)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
+
         case "or":
-            R_or()
+            try:
+                rd = abi2register[instruction[1]]
+                rs1 = abi2register[instruction[2]]
+                rs2 = abi2register[instruction[3]]
+                output[currAddress] = R_or(rd, rs1, rs2)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
+
         case "and":
-            R_and()
+            try:
+                rd = abi2register[instruction[1]]
+                rs1 = abi2register[instruction[2]]
+                rs2 = abi2register[instruction[3]]
+                output[currAddress] = R_and(rd, rs1, rs2)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
+        
         case "lw":
             I_lw()
         case "addi":

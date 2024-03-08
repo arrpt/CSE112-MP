@@ -1,3 +1,2 @@
 add ra, ra, ra   
-add ra, ra, ra
-add ra, ra, ra
+sub zero,ra,s1
