@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 import re
+import sys
 
 def R_add(rd, rs1, rs2):
     funct7 = '0000000'
@@ -84,13 +85,71 @@ def U_lui(rd, imm):
 def J_jal(rd, imm):
     opcode = '1101111'
 
+def Bonus_mul(rd, rs1, rs2):
+    opcode = ''
+
+def Bonus_rst():
+    opcode = ''
+
+def Bonus_halt():
+    opcode = ''
+
+def Bonus_rvrs(rd, rs):
+    opcode = ''
+
 f = open('test.s', 'r')
 data = f.readlines()
-for x in data:
-    print(x.split())
-
-registers = {
-    "x0": '00000',
-    "x1": '00001',
-
-}
+for i in range(len(data)):
+    temp = re.sub(",", " ", data[i].lower())
+    instruction = temp.split()
+    print(instruction)
+    if len(instruction) > 4:
+        print(f'ILLEGAL INSTRUCTION AT LINE {i+1}')
+        sys.exit()
+    
+    operation = instruction[0]
+    match operation:
+        case "add":
+            R_add()
+        case "sub":
+            R_sub()
+        case "sll":
+            R_sll()
+        case "slt":
+            R_slt()
+        case "sltu":
+            R_sltu()
+        case "xor":
+            R_xor()
+        case "srl":
+            R_srl()
+        case "or":
+            R_or()
+        case "and":
+            R_and()
+        case "sw":
+            S_sw()
+        case "beq":
+            B_beq()
+        case "bne":
+            B_bne()
+        case "blt":
+            B_blt()
+        case "bge":
+            B_bge()
+        case "bltu":
+            B_bltu()
+        case "bgeu":
+            B_bgeu()
+        case "auipc":
+            U_auipc()
+        case "lui":
+            U_lui()
+        case "jal":
+            J_jal()
+        case "mul":
+            Bonus_mul()
+        case "halt":
+            Bonus_halt()
+        case "rvrs":
+            Bonus_rvrs()   

@@ -2,8 +2,9 @@
 Written in C++
 
 ## Assembler Roadmap
-- [ ] Writing functions for all instructions
+- [x] Writing functions for all instructions
 - [x] Implementing reading a stdin (textfile)
+- [ ] Label Handling
 - [ ] Output binary
 
 ## Simulator Roadmap
