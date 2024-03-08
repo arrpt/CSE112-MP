@@ -153,3 +153,6 @@ for i in range(len(data)):
             Bonus_halt()
         case "rvrs":
             Bonus_rvrs()   
+        case _:
+            print(f'ILLEGAL INSTRUCTION AT LINE {i+1}')
+            sys.exit()
