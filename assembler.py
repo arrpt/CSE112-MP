@@ -2,11 +2,17 @@
 import re
 import sys
 
+def registerSext(r):
+    return ('0'*(5-len(bin(int(r[1:]))[2:])))+bin(int(r[1:]))[2:]
+
 def R_add(rd, rs1, rs2):
     funct7 = '0000000'
     funct3 = '000'
     opcode = '0110011'
-
+    rd = registerSext(rd)
+    rs1 = registerSext(rs1)
+    rs2 = registerSext(rs2)
+    return funct7+rs2+rs1+funct3+rd+opcode
 
 def R_sub(rd, rs1, rs2):
     funct7 = '0100000'
@@ -97,8 +103,45 @@ def Bonus_halt():
 def Bonus_rvrs(rd, rs):
     opcode = ''
 
+abi2register = {
+    "zero": "x0",
+    "ra": "x1",
+    "sp": "x2",
+    "gp": "x3",
+    "tp": "x4",
+    "t0": "x5",
+    "t1": "x6",
+    "t2": "x7",
+    "s0": "x8",
+    "fp": "x8",
+    "s1": "x9",
+    "a0": "x10",
+    "a1": "x11",
+    "a2": "x12",
+    "a3": "x13",
+    "a4": "x14",
+    "a5": "x15",
+    "a6": "x16",
+    "a7": "x17",
+    "s2": "x18",
+    "s3": "x19",
+    "s4": "x20",
+    "s5": "x21",
+    "s6": "x22",
+    "s7": "x23",
+    "s8": "x24",
+    "s9": "x25",
+    "s10": "x26",
+    "s11": "x27",
+    "t3": "x28",
+    "t4": "x29",
+    "t5": "x30",
+    "t6": "x31",
+}
+
 f = open('test.s', 'r')
 data = f.readlines()
+output = []
 for i in range(len(data)):
     temp = re.sub(",", " ", data[i].lower())
     instruction = temp.split()
@@ -110,7 +153,14 @@ for i in range(len(data)):
     operation = instruction[0]
     match operation:
         case "add":
-            R_add()
+            try:
+                rd = abi2register[instruction[1]]
+                rs1 = abi2register[instruction[2]]
+                rs2 = abi2register[instruction[3]]
+                output.append(R_add(rd, rs1, rs2))
+            except Exception as e:
+                print(f'ERROR {e}')
+
         case "sub":
             R_sub()
         case "sll":
@@ -156,3 +206,7 @@ for i in range(len(data)):
         case _:
             print(f'ILLEGAL INSTRUCTION AT LINE {i+1}')
             sys.exit()
+
+
+
+[print(x) for x in output]
