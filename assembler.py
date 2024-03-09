@@ -4,6 +4,8 @@ import sys
 
 def registerSext(r):
     return ('0'*(5-len(bin(int(r[1:]))[2:])))+bin(int(r[1:]))[2:]
+def immExt(i):
+    return ('0'*(12-len(bin(int(i))[2:])))+bin(int(i))[2:]
 
 def isLabel(dataline):
     if dataline.strip()[-1] == ':':
@@ -92,26 +94,25 @@ def R_and(rd, rs1, rs2):
     rs2 = registerSext(rs2)
     return funct7+rs2+rs1+funct3+rd+opcode
 
-def I_lw(rd, imm):
+def I_lw(rd, rs1, imm):
     funct3 = '010'
     opcode = '0000011'
-
+    return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
 def I_addi(rd, rs1, imm):
     funct3 = '000'
     opcode = '0010011'
-
+    return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
 def I_sltiu(rd, rs1, imm):
     funct3 = '011'
     opcode = '0010011'
-
-def I_jalr(rd, rs1, offset):
+    return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
+def I_jalr(rd, rs1, offset):    
     funct3 = '000'
     opcode = '1100111'
-
+    return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
 def S_sw(rs2, imm):
     funct3 = '010'
     opcode = '0100011'
-
 def B_beq(rs1, rs2, imm):
     funct3 = '000'
     opcode = '1100011'
