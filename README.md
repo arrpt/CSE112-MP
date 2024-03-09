@@ -2,9 +2,14 @@
 Written in C++
 
 ## Assembler Roadmap
-- [ ] Writing functions for all instructions
-- [ ] Implementing reading a stdin (textfile)
+- [x] Writing functions for all instructions
+- [x] Implementing reading a stdin (textfile)
+- [x] Label Handling
+- [ ] Check check
 - [ ] Output binary
+
+## Simulator Roadmap
+- [ ] Signed Extension (sext)
 
 ## Project Contributors
 - Arpit Rajput (2023133)
