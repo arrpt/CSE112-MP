@@ -98,18 +98,22 @@ def I_lw(rd, rs1, imm):
     funct3 = '010'
     opcode = '0000011'
     return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
+
 def I_addi(rd, rs1, imm):
     funct3 = '000'
     opcode = '0010011'
     return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
+
 def I_sltiu(rd, rs1, imm):
     funct3 = '011'
     opcode = '0010011'
     return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
+
 def I_jalr(rd, rs1, offset):    
     funct3 = '000'
     opcode = '1100111'
     return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
+
 def S_sw(rs2, imm):
     funct3 = '010'
     opcode = '0100011'
