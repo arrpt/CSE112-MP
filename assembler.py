@@ -5,11 +5,23 @@ import sys
 def registerSext(r):
     return ('0'*(5-len(bin(int(r[1:]))[2:])))+bin(int(r[1:]))[2:]
 
-def immExt(i):
-    return ('0'*(12-len(bin(int(i))[2:])))+bin(int(i))[2:]
+def immExt_for12bits(i):
+    if int(i) >= 0:
+        return ('0'*(12-len(bin(int(i))[2:])))+bin(int(i))[2:]
+    else:
+        return ('1'*(12-len(bin(int(i))[3:])))+bin(int(i))[3:]
 
 def immExt_for32bits(i):
-    return ('0'*(32-len(bin(int(i))[2:])) + bin(int(i)))[2:]
+    if int(i) >= 0:
+        return ('0'*(32-len(bin(int(i))[2:]))+bin(int(i)))[2:]
+    else:
+        return ('1'*(32-len(bin(int(i))[3:]))+bin(int(i)))[3:]
+
+def immExt_for20bits(i):
+    if int(i) >= 0:
+        return ('0'*(20-len(bin(int(i))[2:]))+bin(int(i)))[2:]
+    else:
+        return ('1'*(20-len(bin(int(i))[3:]))+bin(int(i)))[3:] 
 
 def isLabel(dataline):
     if dataline.strip()[-1] == ':':
@@ -101,67 +113,74 @@ def R_and(rd, rs1, rs2):
 def I_lw(rd, rs1, imm):
     funct3 = '010'
     opcode = '0000011'
-    return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
+    return immExt_for12bits(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
 
 def I_addi(rd, rs1, imm):
     funct3 = '000'
     opcode = '0010011'
-    return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
+    return immExt_for12bits(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
 
 def I_sltiu(rd, rs1, imm):
     funct3 = '011'
     opcode = '0010011'
-    return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
+    return immExt_for12bits(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
 
 def I_jalr(rd, rs1, offset):    
     funct3 = '000'
     opcode = '1100111'
-    return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
+    return immExt_for12bits(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
 
 def S_sw(rs2, imm, rs1):
     funct3 = '010'
     opcode = '0100011'
-    immf = immExt(imm)
+    immf = immExt_for12bits(imm)
     return immf[0:8]+registerSext(rs2)+registerSext(rs1)+funct3+immf[8:]+opcode
     
-def B_beq(rs1, rs2, imm):
+def B_beq(rs1, rs2, offset):
     funct3 = '000'
     opcode = '1100011'
+    offset = immExt_for12bits(offset)
+    return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
-def B_bne(rs1, rs2, imm):
+def B_bne(rs1, rs2, offset):
     funct3 = '001'
     opcode = '1100011'
+    return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
-def B_blt(rs1, rs2, imm):
+def B_blt(rs1, rs2, offset):
     funct3 = '100'
     opcode = '1100011'
+    return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
-def B_bge(rs1, rs2, imm):
+def B_bge(rs1, rs2, offset):
     funct3 = '101'
     opcode = '1100011'
+    return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
-def B_bltu(rs1, rs2, imm):
+def B_bltu(rs1, rs2, offset):
     funct3 = '110'
     opcode = '1100011'
+    return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
-def B_bgeu(rs1, rs2, imm):
+def B_bgeu(rs1, rs2, offset):
     funct3 = '111'
     opcode = '1100011'
+    return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
 def U_auipc(rd, imm):
     opcode = '0110111'
-    immf = immExt_for32bits(imm)
-    return immf[0:21]+registerSext(rd)+opcode
+    immf = immExt_for20bits(imm)
+    return immf+registerSext(rd)+opcode
     
 def U_lui(rd, imm):
     opcode = '0010111'
-    immf = immExt_for32bits(imm)
-    return immf[0:20]+registerSext(rd)+opcode
+    immf = immExt_for20bits(imm)
+    return immf+registerSext(rd)+opcode
 
 def J_jal(rd, imm):
     opcode = '1101111'
-    immf = immExt_for32bits(imm)
-    return immf[0:20]+registerSext(rd)+opcode
+    immf = immExt_for20bits(imm)
+    return immf[-20]+immf[-10:]+immf[-11]+immf[19:-11]+registerSext(rd)+opcode
 
 def Bonus_mul(rd, rs1, rs2):
     opcode = ''
