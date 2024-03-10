@@ -189,7 +189,7 @@ def Bonus_rst():
     opcode = ''
 
 def Bonus_halt():
-    opcode = ''
+    return B_beq('x0', 'x0', '0')
 
 def Bonus_rvrs(rd, rs):
     opcode = ''
@@ -255,12 +255,14 @@ while j < len(data):
 # BUILDING BINARY
 currAddress = 0
 for i in range(len(data)):
-    temp = re.sub(",", " ", data[i].lower())
-    instruction = temp.split()
-    if len(instruction) > 4:
+    if re.search("^[^,]+\\s[^,]+,[^,]+,[^,]+$", data[i].lower()) == None:
         print(f'ILLEGAL INSTRUCTION AT LINE {i+1}')
         sys.exit()
-    
+    temp = re.sub(",", " ", data[i].lower())
+    instruction = temp.split()
+    #if len(instruction) > 4:
+    #    print(f'ILLEGAL INSTRUCTION AT LINE {i+1}')
+    #    sys.exit()
     operation = instruction[0]
     match operation:
         case "add":
