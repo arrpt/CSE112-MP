@@ -4,8 +4,12 @@ import sys
 
 def registerSext(r):
     return ('0'*(5-len(bin(int(r[1:]))[2:])))+bin(int(r[1:]))[2:]
+
 def immExt(i):
     return ('0'*(12-len(bin(int(i))[2:])))+bin(int(i))[2:]
+
+def immExt_for32bits(i):
+    return ('0'*(32-len(bin(int(i))[2:])) + bin(int(i)))[2:]
 
 def isLabel(dataline):
     if dataline.strip()[-1] == ':':
@@ -114,9 +118,12 @@ def I_jalr(rd, rs1, offset):
     opcode = '1100111'
     return immExt(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
 
-def S_sw(rs2, imm):
+def S_sw(rs2, imm, rs1):
     funct3 = '010'
     opcode = '0100011'
+    immf = immExt(imm)
+    return immf[0:8]+registerSext(rs2)+registerSext(rs1)+funct3+immf[8:]+opcode
+    
 def B_beq(rs1, rs2, imm):
     funct3 = '000'
     opcode = '1100011'
@@ -143,13 +150,18 @@ def B_bgeu(rs1, rs2, imm):
 
 def U_auipc(rd, imm):
     opcode = '0110111'
-
+    immf = immExt_for32bits(imm)
+    return immf[0:21]+registerSext(rd)+opcode
+    
 def U_lui(rd, imm):
     opcode = '0010111'
+    immf = immExt_for32bits(imm)
+    return immf[0:20]+registerSext(rd)+opcode
 
 def J_jal(rd, imm):
     opcode = '1101111'
-
+    immf = immExt_for32bits(imm)
+    return immf[0:20]+registerSext(rd)+opcode
 
 def Bonus_mul(rd, rs1, rs2):
     opcode = ''
