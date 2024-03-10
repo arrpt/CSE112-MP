@@ -367,29 +367,107 @@ for i in range(len(data)):
         case "lw":
             I_lw()
         case "addi":
-            I_addi()
+            try:
+                rd = abi2register[instruction[1]]
+                rs = abi2register[instruction[2]]
+                imm = instruction[3]
+                output[currAddress] = I_addi(rd, rs, imm)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
         case "sltiu":
-            I_sltiu()
+            try:
+                rd = abi2register[instruction[1]]
+                rs = abi2register[instruction[2]]
+                imm = instruction[3]
+                output[currAddress] = I_sltiu(rd, rs, imm)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
         case "jalr":
             I_jalr()
         case "sw":
             S_sw()
         case "beq":
-            B_beq()
+            try:
+                rs1 = abi2register[instruction[1]]
+                rs2 = abi2register[instruction[2]]
+                offset = str(symTable[instruction[3]]-currAddress) 
+                output[currAddress] = B_beq(rd, rs, offset)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
         case "bne":
-            B_bne()
+            try:
+                rs1 = abi2register[instruction[1]]
+                rs2 = abi2register[instruction[2]]
+                offset = str(symTable[instruction[3]]-currAddress)
+                output[currAddress] = B_bne(rd, rs, offset)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
         case "blt":
-            B_blt()
+            try:
+                rs1 = abi2register[instruction[1]]
+                rs2 = abi2register[instruction[2]]
+                offset = str(currAddress-symTable[instruction[3]])
+                output[currAddress] = B_blt(rd, rs, offset)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
         case "bge":
-            B_bge()
+            try:
+                rs1 = abi2register[instruction[1]]
+                rs2 = abi2register[instruction[2]]
+                offset = str(currAddress-symTable[instruction[3]])
+                output[currAddress] = B_bge(rd, rs, offset)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
         case "bltu":
-            B_bltu()
+            try:
+                rs1 = abi2register[instruction[1]]
+                rs2 = abi2register[instruction[2]]
+                offset = str(currAddress-symTable[instruction[3]])
+                output[currAddress] = B_bltu(rd, rs, offset)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
         case "bgeu":
-            B_bgeu()
+            try:
+                rs1 = abi2register[instruction[1]]
+                rs2 = abi2register[instruction[2]]
+                offset = str(currAddress-symTable[instruction[3]])
+                output[currAddress] = B_bgeu(rd, rs, offset)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
         case "auipc":
-            U_auipc()
+            try:
+                rd = abi2register[instruction[1]]
+                imm = instruction[2]
+                output[currAddress] = U_auipc(rd, imm)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
         case "lui":
-            U_lui()
+            try:
+                rd = abi2register[instruction[1]]
+                imm = instruction[2]
+                output[currAddress] = U_lui(rd, imm)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e}')
+                sys.exit()
         case "jal":
             try:
                 rd = abi2register[1]
