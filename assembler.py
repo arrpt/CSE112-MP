@@ -28,6 +28,18 @@ def isLabel(dataline):
         return True
     else:
         return False
+    
+def err(offset,n):
+    if int(offset)>=0:
+        if len(bin(offset)[2:]) > n:
+            return False
+        else:
+            return True
+    else:
+        if len(bin(offset)[3:]) > n:
+            return False
+        else:
+            return True 
 
 def R_add(rd, rs1, rs2):
     funct7 = '0000000'
@@ -240,7 +252,7 @@ data = f.readlines()
 output = {}
 symTable = {}
 
-if data[-1] != "beq zero,zero,0x00000000":
+if data[-1] != "beq zero,zero,0x00000000" or data[-1] != "beq zero,zero,0":
     print("ERROR: MISSING VIRTUAL HALT AT LAST ")
     sys.exit()
 
@@ -250,7 +262,7 @@ vHault = False
 while k < len(data):
     if data[k].isspace():
         data.pop(k)
-    if "beq zero,zero,0x00000000" in data[k]:
+    if "beq zero,zero,0x00000000" in data[k] or "beq zero,zero,0" in data[k]:
         vHault = True
     k += 1
 if vHault == False:
@@ -378,6 +390,8 @@ for i in range(len(data)):
             try:
                 rd = abi2register[operands[0]]
                 imm = operands[1].split('(')[0]
+                if err(imm,12) == False:
+                    sys.exit()
                 rs = abi2register[operands[1].split('(')[1][:-1]]
                 output[currAddress] = I_lw(rd, rs, imm)
                 currAddress += 4
@@ -389,6 +403,8 @@ for i in range(len(data)):
                 rd = abi2register[operands[0]]
                 rs = abi2register[operands[1]]
                 imm = operands[2]
+                if err(imm,12) == False:
+                    sys.exit()
                 output[currAddress] = I_addi(rd, rs, imm)
                 currAddress += 4
             except Exception as e:
@@ -399,6 +415,8 @@ for i in range(len(data)):
                 rd = abi2register[operands[0]]
                 rs = abi2register[operands[1]]
                 imm = operands[2]
+                if err(imm,12) == False:
+                    sys.exit()
                 output[currAddress] = I_sltiu(rd, rs, imm)
                 currAddress += 4
             except Exception as e:
@@ -409,6 +427,8 @@ for i in range(len(data)):
                 rd = abi2register[operands[0]]
                 rs = abi2register[operands[1]]
                 offset = operands[2]
+                if err(offset,12) == False:
+                    sys.exit()
                 output[currAddress] = I_jalr(rd, rs, offset)
                 currAddress += 4
             except Exception as e:
@@ -418,6 +438,8 @@ for i in range(len(data)):
             try:
                 rs2 = abi2register[operands[0]]
                 imm = operands[1].split('(')[0]
+                if err(imm,12) == False:
+                    sys.exit()
                 rs1 = abi2register[operands[1].split('(')[1][:-1]]
                 output[currAddress] = S_sw(rs2, imm, rs1)
                 currAddress += 4
@@ -432,6 +454,8 @@ for i in range(len(data)):
                     offset = operands[2]
                 else:
                     offset = str(symTable[operands[2]]-currAddress) 
+                if err(offset,12) == False:
+                    sys.exit()
                 output[currAddress] = B_beq(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
@@ -445,6 +469,8 @@ for i in range(len(data)):
                     offset = operands[2]
                 else:
                     offset = str(symTable[operands[2]]-currAddress) 
+                if err(offset,12) == False:
+                    sys.exit()
                 output[currAddress] = B_bne(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
@@ -458,6 +484,8 @@ for i in range(len(data)):
                     offset = operands[2]
                 else:
                     offset = str(symTable[operands[2]]-currAddress) 
+                if err(offset,12) == False:
+                    sys.exit()
                 output[currAddress] = B_blt(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
@@ -471,6 +499,8 @@ for i in range(len(data)):
                     offset = operands[2]
                 else:
                     offset = str(symTable[operands[2]]-currAddress) 
+                if err(offset,12) == False:
+                    sys.exit()
                 output[currAddress] = B_bge(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
@@ -484,6 +514,8 @@ for i in range(len(data)):
                     offset = operands[2]
                 else:
                     offset = str(symTable[operands[2]]-currAddress) 
+                if err(offset,12) == False:
+                    sys.exit()
                 output[currAddress] = B_bltu(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
@@ -497,6 +529,8 @@ for i in range(len(data)):
                     offset = operands[2]
                 else:
                     offset = str(symTable[operands[2]]-currAddress) 
+                if err(offset,12) == False:
+                    sys.exit()
                 output[currAddress] = B_bgeu(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
