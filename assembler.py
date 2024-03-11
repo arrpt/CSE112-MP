@@ -540,6 +540,8 @@ for i in range(len(data)):
             try:
                 rd = abi2register[operands[0]]
                 imm = operands[1]
+                if err(imm,20) == False:
+                    sys.exit()
                 output[currAddress] = U_auipc(rd, imm)
                 currAddress += 4
             except Exception as e:
@@ -549,6 +551,8 @@ for i in range(len(data)):
             try:
                 rd = abi2register[operands[0]]
                 imm = operands[1]
+                if err(imm,20) == False:
+                    sys.exit()
                 output[currAddress] = U_lui(rd, imm)
                 currAddress += 4
             except Exception as e:
@@ -558,6 +562,8 @@ for i in range(len(data)):
             try:
                 rd = abi2register[operands[0]]
                 imm = operands[1]
+                if err(imm,20) == False:
+                    sys.exit()
                 output[currAddress] = J_jal(rd, imm)
                 currAddress += 4
             except:
@@ -571,7 +577,7 @@ for i in range(len(data)):
         case "rvrs":
             Bonus_rvrs()   
         case _:
-            print(f'ILLEGAL operands AT LINE {i+1}')
+            print(f'ILLEGAL OPERANDS AT LINE {i+1}')
             sys.exit()
 
 
