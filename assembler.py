@@ -252,8 +252,8 @@ data = f.readlines()
 output = {}
 symTable = {}
 
-if data[-1] != "beq zero,zero,0x00000000" or data[-1] != "beq zero,zero,0":
-    print("ERROR: MISSING VIRTUAL HALT AT LAST ")
+if "beq zero,zero,0" not in data[-1]:
+    print("ERROR: MISSING VIRTUAL HALT AT LAST!")
     sys.exit()
 
 # REMOVING EMPTY LINES
@@ -281,7 +281,7 @@ while j < len(data):
     j += 1
     currAddress += 4
 
-# BUILDING BINARY
+# BUILDINvirtual BINARY
 currAddress = 0
 for i in range(len(data)):
     operation = data[i].split()[0]
