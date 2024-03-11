@@ -13,15 +13,15 @@ def immExt_for12bits(i):
 
 def immExt_for32bits(i):
     if int(i) >= 0:
-        return ('0'*(32-len(bin(int(i))[2:]))+bin(int(i)))[2:]
+        return ('0'*(32-len(bin(int(i))[2:])))+bin(int(i))[2:]
     else:
-        return ('1'*(32-len(bin(int(i))[3:]))+bin(int(i)))[3:]
+        return ('1'*(32-len(bin(int(i))[3:])))+bin(int(i))[3:]
 
 def immExt_for20bits(i):
     if int(i) >= 0:
-        return ('0'*(20-len(bin(int(i))[2:]))+bin(int(i)))[2:]
+        return ('0'*(20-len(bin(int(i))[2:])))+bin(int(i))[2:]
     else:
-        return ('1'*(20-len(bin(int(i))[3:]))+bin(int(i)))[3:] 
+        return ('1'*(20-len(bin(int(i))[3:])))+bin(int(i))[3:] 
 
 def isLabel(dataline):
     if dataline.strip()[-1] == ':':
@@ -145,26 +145,31 @@ def B_beq(rs1, rs2, offset):
 def B_bne(rs1, rs2, offset):
     funct3 = '001'
     opcode = '1100011'
+    offset = immExt_for12bits(offset)
     return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
 def B_blt(rs1, rs2, offset):
     funct3 = '100'
     opcode = '1100011'
+    offset = immExt_for12bits(offset)
     return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
 def B_bge(rs1, rs2, offset):
     funct3 = '101'
     opcode = '1100011'
+    offset = immExt_for12bits(offset)
     return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
 def B_bltu(rs1, rs2, offset):
     funct3 = '110'
     opcode = '1100011'
+    offset = immExt_for12bits(offset)
     return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
 def B_bgeu(rs1, rs2, offset):
     funct3 = '111'
     opcode = '1100011'
+    offset = immExt_for12bits(offset)
     return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
 def U_auipc(rd, imm):
@@ -180,7 +185,7 @@ def U_lui(rd, imm):
 def J_jal(rd, imm):
     opcode = '1101111'
     immf = immExt_for20bits(imm)
-    return immf[-20]+immf[-10:]+immf[-11]+immf[19:-11]+registerSext(rd)+opcode
+    return immf[-20]+immf[-10:]+immf[-11]+immf[-19:-11]+registerSext(rd)+opcode
 
 def Bonus_mul(rd, rs1, rs2):
     opcode = ''
@@ -246,236 +251,271 @@ while k < len(data):
 currAddress = 0
 j = 0
 while j < len(data):
-    if isLabel(data[j]) == True:
-        symTable[data[j].strip()[:-1]] = currAddress
-        data.pop(j)
+    if isLabel(data[j].split()[0]) == True:
+        symTable[data[j].split()[0].strip()[:-1]] = currAddress
+        data[j] = data[j].replace(data[j].split()[0], '')
     j += 1
     currAddress += 4
 
 # BUILDING BINARY
 currAddress = 0
 for i in range(len(data)):
-    if re.search("^[^,]+\\s[^,]+,[^,]+,[^,]+$", data[i].lower()) == None:
-        print(f'ILLEGAL INSTRUCTION AT LINE {i+1}')
-        sys.exit()
-    temp = re.sub(",", " ", data[i].lower())
-    instruction = temp.split()
-    #if len(instruction) > 4:
-    #    print(f'ILLEGAL INSTRUCTION AT LINE {i+1}')
-    #    sys.exit()
-    operation = instruction[0]
+    operation = data[i].split()[0]
+    operands = data[i].split()[1].split(',')
     match operation:
         case "add":
             try:
-                rd = abi2register[instruction[1]]
-                rs1 = abi2register[instruction[2]]
-                rs2 = abi2register[instruction[3]]
+                rd = abi2register[operands[0]]
+                rs1 = abi2register[operands[1]]
+                rs2 = abi2register[operands[2]]
                 output[currAddress] = R_add(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
 
         case "sub":
             try:
-                rd = abi2register[instruction[1]]
-                rs1 = abi2register[instruction[2]]
-                rs2 = abi2register[instruction[3]]
+                rd = abi2register[operands[0]]
+                rs1 = abi2register[operands[1]]
+                rs2 = abi2register[operands[2]]
                 output[currAddress] = R_sub(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
     
         case "sll":
             try:
-                rd = abi2register[instruction[1]]
-                rs1 = abi2register[instruction[2]]
-                rs2 = abi2register[instruction[3]]
+                rd = abi2register[operands[0]]
+                rs1 = abi2register[operands[1]]
+                rs2 = abi2register[operands[2]]
                 output[currAddress] = R_sll(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
 
         case "slt":
             try:
-                rd = abi2register[instruction[1]]
-                rs1 = abi2register[instruction[2]]
-                rs2 = abi2register[instruction[3]]
+                rd = abi2register[operands[0]]
+                rs1 = abi2register[operands[1]]
+                rs2 = abi2register[operands[2]]
                 output[currAddress] = R_slt(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
 
         case "sltu":
             try:
-                rd = abi2register[instruction[1]]
-                rs1 = abi2register[instruction[2]]
-                rs2 = abi2register[instruction[3]]
+                rd = abi2register[operands[0]]
+                rs1 = abi2register[operands[1]]
+                rs2 = abi2register[operands[2]]
                 output[currAddress] = R_sltu(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
             
         case "xor":
             try:
-                rd = abi2register[instruction[1]]
-                rs1 = abi2register[instruction[2]]
-                rs2 = abi2register[instruction[3]]
+                rd = abi2register[operands[0]]
+                rs1 = abi2register[operands[1]]
+                rs2 = abi2register[operands[2]]
                 output[currAddress] = R_xor(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
 
         case "srl":
             try:
-                rd = abi2register[instruction[1]]
-                rs1 = abi2register[instruction[2]]
-                rs2 = abi2register[instruction[3]]
+                rd = abi2register[operands[0]]
+                rs1 = abi2register[operands[1]]
+                rs2 = abi2register[operands[2]]
                 output[currAddress] = R_srl(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
 
         case "or":
             try:
-                rd = abi2register[instruction[1]]
-                rs1 = abi2register[instruction[2]]
-                rs2 = abi2register[instruction[3]]
+                rd = abi2register[operands[0]]
+                rs1 = abi2register[operands[1]]
+                rs2 = abi2register[operands[2]]
                 output[currAddress] = R_or(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
 
         case "and":
             try:
-                rd = abi2register[instruction[1]]
-                rs1 = abi2register[instruction[2]]
-                rs2 = abi2register[instruction[3]]
+                rd = abi2register[operands[0]]
+                rs1 = abi2register[operands[1]]
+                rs2 = abi2register[operands[2]]
                 output[currAddress] = R_and(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
         
         case "lw":
-            I_lw()
+            try:
+                rd = abi2register[operands[0]]
+                imm = operands[1].split('(')[0]
+                rs = abi2register[operands[1].split('(')[1][:-1]]
+                output[currAddress] = I_lw(rd, rs, imm)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e} {i+1}')
+                sys.exit()
         case "addi":
             try:
-                rd = abi2register[instruction[1]]
-                rs = abi2register[instruction[2]]
-                imm = instruction[3]
+                rd = abi2register[operands[0]]
+                rs = abi2register[operands[1]]
+                imm = operands[2]
                 output[currAddress] = I_addi(rd, rs, imm)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
         case "sltiu":
             try:
-                rd = abi2register[instruction[1]]
-                rs = abi2register[instruction[2]]
-                imm = instruction[3]
+                rd = abi2register[operands[0]]
+                rs = abi2register[operands[1]]
+                imm = operands[2]
                 output[currAddress] = I_sltiu(rd, rs, imm)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
         case "jalr":
-            I_jalr()
-        case "sw":
-            S_sw()
-        case "beq":
             try:
-                rs1 = abi2register[instruction[1]]
-                rs2 = abi2register[instruction[2]]
-                offset = str(symTable[instruction[3]]-currAddress) 
-                output[currAddress] = B_beq(rd, rs, offset)
+                rd = abi2register[operands[0]]
+                rs = abi2register[operands[1]]
+                offset = operands[2]
+                output[currAddress] = I_jalr(rd, rs, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
+                sys.exit()
+        case "sw":
+            try:
+                rs2 = abi2register[operands[0]]
+                imm = operands[1].split('(')[0]
+                rs1 = abi2register[operands[1].split('(')[1][:-1]]
+                output[currAddress] = S_sw(rs2, imm, rs1)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e} {i+1}')
+                sys.exit()
+        case "beq":
+            try:
+                rs1 = abi2register[operands[0]]
+                rs2 = abi2register[operands[1]]
+                if operands[2].isnumeric():
+                    offset = operands[2]
+                else:
+                    offset = str(symTable[operands[2]]-currAddress) 
+                output[currAddress] = B_beq(rs1, rs2, offset)
+                currAddress += 4
+            except Exception as e:
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
         case "bne":
             try:
-                rs1 = abi2register[instruction[1]]
-                rs2 = abi2register[instruction[2]]
-                offset = str(symTable[instruction[3]]-currAddress)
-                output[currAddress] = B_bne(rd, rs, offset)
+                rs1 = abi2register[operands[0]]
+                rs2 = abi2register[operands[1]]
+                if operands[2].isnumeric():
+                    offset = operands[2]
+                else:
+                    offset = str(symTable[operands[2]]-currAddress) 
+                output[currAddress] = B_bne(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
         case "blt":
             try:
-                rs1 = abi2register[instruction[1]]
-                rs2 = abi2register[instruction[2]]
-                offset = str(currAddress-symTable[instruction[3]])
-                output[currAddress] = B_blt(rd, rs, offset)
+                rs1 = abi2register[operands[0]]
+                rs2 = abi2register[operands[1]]
+                if operands[2].isnumeric():
+                    offset = operands[2]
+                else:
+                    offset = str(symTable[operands[2]]-currAddress) 
+                output[currAddress] = B_blt(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
         case "bge":
             try:
-                rs1 = abi2register[instruction[1]]
-                rs2 = abi2register[instruction[2]]
-                offset = str(currAddress-symTable[instruction[3]])
-                output[currAddress] = B_bge(rd, rs, offset)
+                rs1 = abi2register[operands[0]]
+                rs2 = abi2register[operands[1]]
+                if operands[2].isnumeric():
+                    offset = operands[2]
+                else:
+                    offset = str(symTable[operands[2]]-currAddress) 
+                output[currAddress] = B_bge(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
         case "bltu":
             try:
-                rs1 = abi2register[instruction[1]]
-                rs2 = abi2register[instruction[2]]
-                offset = str(currAddress-symTable[instruction[3]])
-                output[currAddress] = B_bltu(rd, rs, offset)
+                rs1 = abi2register[operands[0]]
+                rs2 = abi2register[operands[1]]
+                if operands[2].isnumeric():
+                    offset = operands[2]
+                else:
+                    offset = str(symTable[operands[2]]-currAddress) 
+                output[currAddress] = B_bltu(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
         case "bgeu":
             try:
-                rs1 = abi2register[instruction[1]]
-                rs2 = abi2register[instruction[2]]
-                offset = str(currAddress-symTable[instruction[3]])
-                output[currAddress] = B_bgeu(rd, rs, offset)
+                rs1 = abi2register[operands[0]]
+                rs2 = abi2register[operands[1]]
+                if operands[2].isnumeric():
+                    offset = operands[2]
+                else:
+                    offset = str(symTable[operands[2]]-currAddress) 
+                output[currAddress] = B_bgeu(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
         case "auipc":
             try:
-                rd = abi2register[instruction[1]]
-                imm = instruction[2]
+                rd = abi2register[operands[0]]
+                imm = operands[1]
                 output[currAddress] = U_auipc(rd, imm)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
         case "lui":
             try:
-                rd = abi2register[instruction[1]]
-                imm = instruction[2]
+                rd = abi2register[operands[0]]
+                imm = operands[1]
                 output[currAddress] = U_lui(rd, imm)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
         case "jal":
             try:
-                rd = abi2register[1]
-                imm = instruction[2]
+                rd = abi2register[operands[0]]
+                imm = operands[1]
                 output[currAddress] = J_jal(rd, imm)
                 currAddress += 4
             except:
-                print(f'ERROR {e}')
+                print(f'ERROR {e} {i+1}')
                 sys.exit()
     
         case "mul":
@@ -485,9 +525,9 @@ for i in range(len(data)):
         case "rvrs":
             Bonus_rvrs()   
         case _:
-            print(f'ILLEGAL INSTRUCTION AT LINE {i+1}')
+            print(f'ILLEGAL operands AT LINE {i+1}')
             sys.exit()
 
 
-print(symTable)
-print(output)
+#print(symTable)
+[print(x) for x in list(output.values())]
