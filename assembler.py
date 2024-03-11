@@ -247,7 +247,9 @@ abi2register = {
     "t6": "x31",
 }
 
-f = open('test.s', 'r')
+input_file = sys.argv[1]
+output_file = sys.argv[2]
+f = open(input_file, 'r')
 data = f.readlines()
 output = {}
 symTable = {}
@@ -580,4 +582,9 @@ for i in range(len(data)):
             print(f'ILLEGAL OPERANDS AT LINE {i+1}')
             sys.exit()
 
-[print(x) for x in list(output.values())]
+#print(symTable)
+answer = open(output_file,'w')
+for x in output.values():
+    answer.write(x + '\n')
+answer.close()
+f.close()
