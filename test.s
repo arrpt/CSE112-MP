@@ -1,2 +1,1 @@
-add ra, ra, ra
-sub zero,ra,s1
+addi t1,t0,-50

@@ -419,7 +419,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(currAddress-symTable[operands[2]]) 
                 output[currAddress] = B_beq(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
@@ -432,7 +432,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(currAddress-symTable[operands[2]])  
                 output[currAddress] = B_bne(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
@@ -445,7 +445,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(currAddress-symTable[operands[2]])  
                 output[currAddress] = B_blt(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
@@ -458,7 +458,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(currAddress-symTable[operands[2]])  
                 output[currAddress] = B_bge(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
@@ -471,7 +471,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(currAddress-symTable[operands[2]])  
                 output[currAddress] = B_bltu(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
@@ -484,7 +484,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(currAddress-symTable[operands[2]])  
                 output[currAddress] = B_bgeu(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
