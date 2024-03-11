@@ -520,14 +520,14 @@ for i in range(len(data)):
     
         case "mul":
             Bonus_mul()
+        case "rst":
+            Bonus_rst()
         case "halt":
             Bonus_halt()
         case "rvrs":
-            Bonus_rvrs()   
+            Bonus_rvrs()
         case _:
             print(f'ILLEGAL operands AT LINE {i+1}')
             sys.exit()
 
-
-#print(symTable)
 [print(x) for x in list(output.values())]
