@@ -31,12 +31,12 @@ def isLabel(dataline):
     
 def err(offset,n):
     if int(offset)>=0:
-        if len(bin(offset)[2:]) > n:
+        if len(bin(int(offset))[2:]) > n:
             return False
         else:
             return True
     else:
-        if len(bin(offset)[3:]) > n:
+        if len(bin(int(offset))[3:]) > n:
             return False
         else:
             return True 
