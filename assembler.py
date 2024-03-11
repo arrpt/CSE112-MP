@@ -24,7 +24,7 @@ def immExt_for20bits(i):
         return ('1'*(20-len(bin(int(i))[3:])))+bin(int(i))[3:] 
 
 def isLabel(dataline):
-    if dataline.strip()[-1] == ':':
+    if dataline.strip()[-1] == ':' and dataline.strip()[-2] != " ":
         return True
     else:
         return False
