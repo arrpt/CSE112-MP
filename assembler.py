@@ -240,12 +240,24 @@ data = f.readlines()
 output = {}
 symTable = {}
 
+if data[-1] != "beq zero,zero,0x00000000":
+    print("ERROR: MISSING VIRTUAL HALT AT LAST ")
+    sys.exit()
+
 # REMOVING EMPTY LINES
 k = 0
+vHault = False
 while k < len(data):
     if data[k].isspace():
         data.pop(k)
+    if "beq zero,zero,0x00000000" in data[k]:
+        vHault = True
     k += 1
+if vHault == False:
+    print("HALT INSTRUCTION NOT USED AS LAST INSTRUCTION")
+
+
+
 
 # CALCULATING LABEL ADDRESSES
 currAddress = 0
@@ -271,7 +283,7 @@ for i in range(len(data)):
                 output[currAddress] = R_add(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
 
         case "sub":
@@ -282,7 +294,7 @@ for i in range(len(data)):
                 output[currAddress] = R_sub(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
     
         case "sll":
@@ -293,7 +305,7 @@ for i in range(len(data)):
                 output[currAddress] = R_sll(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
 
         case "slt":
@@ -304,7 +316,7 @@ for i in range(len(data)):
                 output[currAddress] = R_slt(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
 
         case "sltu":
@@ -315,7 +327,7 @@ for i in range(len(data)):
                 output[currAddress] = R_sltu(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
             
         case "xor":
@@ -326,7 +338,7 @@ for i in range(len(data)):
                 output[currAddress] = R_xor(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
 
         case "srl":
@@ -337,7 +349,7 @@ for i in range(len(data)):
                 output[currAddress] = R_srl(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
 
         case "or":
@@ -348,7 +360,7 @@ for i in range(len(data)):
                 output[currAddress] = R_or(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
 
         case "and":
@@ -359,7 +371,7 @@ for i in range(len(data)):
                 output[currAddress] = R_and(rd, rs1, rs2)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         
         case "lw":
@@ -370,7 +382,7 @@ for i in range(len(data)):
                 output[currAddress] = I_lw(rd, rs, imm)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "addi":
             try:
@@ -380,7 +392,7 @@ for i in range(len(data)):
                 output[currAddress] = I_addi(rd, rs, imm)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "sltiu":
             try:
@@ -390,7 +402,7 @@ for i in range(len(data)):
                 output[currAddress] = I_sltiu(rd, rs, imm)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "jalr":
             try:
@@ -400,7 +412,7 @@ for i in range(len(data)):
                 output[currAddress] = I_jalr(rd, rs, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "sw":
             try:
@@ -410,7 +422,7 @@ for i in range(len(data)):
                 output[currAddress] = S_sw(rs2, imm, rs1)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "beq":
             try:
@@ -419,11 +431,11 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(currAddress-symTable[operands[2]]) 
+                    offset = str(symTable[operands[2]]-currAddress) 
                 output[currAddress] = B_beq(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "bne":
             try:
@@ -432,11 +444,11 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(currAddress-symTable[operands[2]])  
+                    offset = str(symTable[operands[2]]-currAddress) 
                 output[currAddress] = B_bne(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "blt":
             try:
@@ -445,11 +457,11 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(currAddress-symTable[operands[2]])  
+                    offset = str(symTable[operands[2]]-currAddress) 
                 output[currAddress] = B_blt(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "bge":
             try:
@@ -458,11 +470,11 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(currAddress-symTable[operands[2]])  
+                    offset = str(symTable[operands[2]]-currAddress) 
                 output[currAddress] = B_bge(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "bltu":
             try:
@@ -471,11 +483,11 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(currAddress-symTable[operands[2]])  
+                    offset = str(symTable[operands[2]]-currAddress) 
                 output[currAddress] = B_bltu(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "bgeu":
             try:
@@ -484,11 +496,11 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(currAddress-symTable[operands[2]])  
+                    offset = str(symTable[operands[2]]-currAddress) 
                 output[currAddress] = B_bgeu(rs1, rs2, offset)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "auipc":
             try:
@@ -497,7 +509,7 @@ for i in range(len(data)):
                 output[currAddress] = U_auipc(rd, imm)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "lui":
             try:
@@ -506,7 +518,7 @@ for i in range(len(data)):
                 output[currAddress] = U_lui(rd, imm)
                 currAddress += 4
             except Exception as e:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
         case "jal":
             try:
@@ -515,19 +527,19 @@ for i in range(len(data)):
                 output[currAddress] = J_jal(rd, imm)
                 currAddress += 4
             except:
-                print(f'ERROR {e} {i+1}')
+                print(f'ILLEGAL INSTRUCTION AT LINE: {i+1}')
                 sys.exit()
     
         case "mul":
             Bonus_mul()
-        case "rst":
-            Bonus_rst()
         case "halt":
             Bonus_halt()
         case "rvrs":
-            Bonus_rvrs()
+            Bonus_rvrs()   
         case _:
             print(f'ILLEGAL operands AT LINE {i+1}')
             sys.exit()
 
+
+#print(symTable)
 [print(x) for x in list(output.values())]
