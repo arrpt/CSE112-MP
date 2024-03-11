@@ -9,19 +9,19 @@ def immExt_for12bits(i):
     if int(i) >= 0:
         return ('0'*(12-len(bin(int(i))[2:])))+bin(int(i))[2:]
     else:
-        return ('1'*(12-len(bin(int(i))[3:])))+bin(int(i))[3:]
+        return bin(int(i) & (2**12 - 1))[2:]
 
 def immExt_for32bits(i):
     if int(i) >= 0:
         return ('0'*(32-len(bin(int(i))[2:])))+bin(int(i))[2:]
     else:
-        return ('1'*(32-len(bin(int(i))[3:])))+bin(int(i))[3:]
+        return bin(int(i) & (2**32 - 1))[2:]
 
 def immExt_for20bits(i):
     if int(i) >= 0:
         return ('0'*(20-len(bin(int(i))[2:])))+bin(int(i))[2:]
     else:
-        return ('1'*(20-len(bin(int(i))[3:])))+bin(int(i))[3:] 
+        return bin(int(i) & (2**20 - 1))[2:] 
 
 def isLabel(dataline):
     if dataline.strip()[-1] == ':' and dataline.strip()[-2] != " ":
@@ -140,7 +140,7 @@ def I_sltiu(rd, rs1, imm):
 def I_jalr(rd, rs1, offset):    
     funct3 = '000'
     opcode = '1100111'
-    return immExt_for12bits(imm)+registerSext(rs1)+funct3+registerSext(rd)+opcode
+    return immExt_for12bits(offset)+registerSext(rs1)+funct3+registerSext(rd)+opcode
 
 def S_sw(rs2, imm, rs1):
     funct3 = '010'
@@ -453,7 +453,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(symTable[operands[2]]-currAddress)
                 if err(offset,12) == False:
                     sys.exit()
                 output[currAddress] = B_beq(rs1, rs2, offset)
@@ -483,7 +483,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(symTable[operands[2]]-currAddress)
                 if err(offset,12) == False:
                     sys.exit()
                 output[currAddress] = B_blt(rs1, rs2, offset)
@@ -528,7 +528,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(symTable[operands[2]]-currAddress)  
                 if err(offset,12) == False:
                     sys.exit()
                 output[currAddress] = B_bgeu(rs1, rs2, offset)
@@ -580,6 +580,4 @@ for i in range(len(data)):
             print(f'ILLEGAL OPERANDS AT LINE {i+1}')
             sys.exit()
 
-
-#print(symTable)
 [print(x) for x in list(output.values())]
