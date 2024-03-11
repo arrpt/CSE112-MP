@@ -1,6 +1,6 @@
 # CSE112
 - Written in Python
-- Run the assembler using `python3 Assembler.py`
+- Run the assembler using `python3 Assembler.py input_file output_file`
 - Write the assembly code in `test.s` file
 
 ## Assembler Roadmap
