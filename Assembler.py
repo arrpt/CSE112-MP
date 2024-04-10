@@ -247,9 +247,9 @@ abi2register = {
     "t6": "x31",
 }
 
-input_file = sys.argv[1]
-output_file = sys.argv[2]
-f = open(input_file, 'r')
+#input_file = sys.argv[1]
+#output_file = sys.argv[2]
+f = open('test.s', 'r')
 data = f.readlines()
 output = {}
 symTable = {}
