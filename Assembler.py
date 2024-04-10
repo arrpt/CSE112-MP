@@ -146,7 +146,7 @@ def S_sw(rs2, imm, rs1):
     funct3 = '010'
     opcode = '0100011'
     immf = immExt_for12bits(imm)
-    return immf[0:8]+registerSext(rs2)+registerSext(rs1)+funct3+immf[8:]+opcode
+    return immf[0:7]+registerSext(rs2)+registerSext(rs1)+funct3+immf[7:]+opcode
     
 def B_beq(rs1, rs2, offset):
     funct3 = '000'
@@ -185,12 +185,12 @@ def B_bgeu(rs1, rs2, offset):
     return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
 def U_auipc(rd, imm):
-    opcode = '0110111'
+    opcode = '0010111'
     immf = immExt_for20bits(imm)
     return immf+registerSext(rd)+opcode
     
 def U_lui(rd, imm):
-    opcode = '0010111'
+    opcode = '0110111'
     immf = immExt_for20bits(imm)
     return immf+registerSext(rd)+opcode
 
@@ -500,7 +500,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(currAddress-symTable[operands[2]]) 
                 if err(offset,12) == False:
                     sys.exit()
                 output[currAddress] = B_bge(rs1, rs2, offset)
@@ -515,7 +515,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(currAddress-symTable[operands[2]]) 
                 if err(offset,12) == False:
                     sys.exit()
                 output[currAddress] = B_bltu(rs1, rs2, offset)
@@ -583,8 +583,9 @@ for i in range(len(data)):
             sys.exit()
 
 #print(symTable)
-answer = open(output_file,'w')
+#answer = open(output_file,'w')
 for x in output.values():
-    answer.write(x + '\n')
-answer.close()
+    print(x)
+    #answer.write(x + '\n')
+#answer.close()
 f.close()
