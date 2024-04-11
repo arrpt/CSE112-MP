@@ -185,12 +185,12 @@ def B_bgeu(rs1, rs2, offset):
     return offset[-12]+offset[-10:-4]+registerSext(rs2)+registerSext(rs1)+funct3+offset[-4:]+offset[-11]+opcode
 
 def U_auipc(rd, imm):
-    opcode = '0110111'
+    opcode = '0010111'
     immf = immExt_for20bits(imm)
     return immf+registerSext(rd)+opcode
     
 def U_lui(rd, imm):
-    opcode = '0010111'
+    opcode = '0110111'
     immf = immExt_for20bits(imm)
     return immf+registerSext(rd)+opcode
 
@@ -200,16 +200,22 @@ def J_jal(rd, imm):
     return immf[-20]+immf[-10:]+immf[-11]+immf[-19:-11]+registerSext(rd)+opcode
 
 def Bonus_mul(rd, rs1, rs2):
-    opcode = ''
+    opcode = '0110011'  
+    funct7 = '0000001'  
+    funct3 = '000'
+    return funct7 + registerSext(rs2) + registerSext(rs1) + funct3 + registerSext(rd) + opcode
 
 def Bonus_rst():
-    opcode = ''
+    opcode = '00000000000000000000000000000000'  
+    return opcode
 
 def Bonus_halt():
     return B_beq('x0', 'x0', '0')
 
 def Bonus_rvrs(rd, rs):
-    opcode = ''
+    opcode = '0001011' 
+    funct3 = '000'     
+    return immExt_for12bits('0') + registerSext(rs) + funct3 + registerSext(rd) + opcode
 
 abi2register = {
     "zero": "x0",
@@ -576,6 +582,8 @@ for i in range(len(data)):
             Bonus_halt()
         case "rvrs":
             Bonus_rvrs()   
+        case "rst":
+            Bonus_rst()
         case _:
             print(f'ILLEGAL OPERANDS AT LINE {i+1}')
             sys.exit()
