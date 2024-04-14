@@ -1,12 +1,14 @@
 # CSE112
-Written in C++
+- Written in Python
+- Run the assembler using `python3 Assembler.py input_file output_file`
+- Write the assembly code in `test.s` file
 
 ## Assembler Roadmap
 - [x] Writing functions for all instructions
 - [x] Implementing reading a stdin (textfile)
 - [x] Label Handling
-- [ ] Check check
-- [ ] Output binary
+- [x] Check check
+- [x] Output binary
 
 ## Simulator Roadmap
 - [ ] Signed Extension (sext)

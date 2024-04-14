@@ -146,7 +146,7 @@ def S_sw(rs2, imm, rs1):
     funct3 = '010'
     opcode = '0100011'
     immf = immExt_for12bits(imm)
-    return immf[0:8]+registerSext(rs2)+registerSext(rs1)+funct3+immf[8:]+opcode
+    return immf[0:7]+registerSext(rs2)+registerSext(rs1)+funct3+immf[7:]+opcode
     
 def B_beq(rs1, rs2, offset):
     funct3 = '000'
@@ -253,6 +253,8 @@ abi2register = {
     "t6": "x31",
 }
 
+#input_file = sys.argv[1]
+#output_file = sys.argv[2]
 f = open('test.s', 'r')
 data = f.readlines()
 output = {}
@@ -504,7 +506,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(currAddress-symTable[operands[2]]) 
                 if err(offset,12) == False:
                     sys.exit()
                 output[currAddress] = B_bge(rs1, rs2, offset)
@@ -519,7 +521,7 @@ for i in range(len(data)):
                 if operands[2].isnumeric():
                     offset = operands[2]
                 else:
-                    offset = str(symTable[operands[2]]-currAddress) 
+                    offset = str(currAddress-symTable[operands[2]]) 
                 if err(offset,12) == False:
                     sys.exit()
                 output[currAddress] = B_bltu(rs1, rs2, offset)
@@ -588,4 +590,10 @@ for i in range(len(data)):
             print(f'ILLEGAL OPERANDS AT LINE {i+1}')
             sys.exit()
 
-[print(x) for x in list(output.values())]
+#print(symTable)
+#answer = open(output_file,'w')
+for x in output.values():
+    print(x)
+    #answer.write(x + '\n')
+#answer.close()
+f.close()
