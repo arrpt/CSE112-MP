@@ -135,4 +135,46 @@ while pc < len(data):
     elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '111' and data[pc][-32:-25] == '0000000':
         r_and(data[pc])
     
+    elif data[pc][-7:] == '0000011' and data[pc][-15:-12] == '010':
+        i_lw(data[pc])
+
+    elif data[pc][-7:] == '0010011' and data[pc][-15:-12] == '000':
+        i_addi(data[pc])
+        
+    elif data[pc][-7:] == '0000011' and data[pc][-15:-12] == '011':
+        i_sltiu(data[pc])
+        
+    elif data[pc][-7:] == '1100111' and data[pc][-15:-12] == '000':
+        i_jalr(data[pc])
+        
+    elif data[pc][-7:] == '0100011' and data[pc][-15:-12] == '010':
+        s_sw(data[pc])
+        
+    elif data[pc][-7:] == '1100011' and data[pc][-15:-12] == '000':
+        b_beq(data[pc])
+    
+    elif data[pc][-7:] == '1100011' and data[pc][-15:-12] == '001':
+        b_bne(data[pc])
+        
+    elif data[pc][-7:] == '1100011' and data[pc][-15:-12] == '100':
+        b_blt(data[pc])
+        
+    elif data[pc][-7:] == '1100011' and data[pc][-15:-12] == '101':
+        b_bge(data[pc])
+        
+    elif data[pc][-7:] == '1100011' and data[pc][-15:-12] == '110':
+        b_bltu(data[pc])
+        
+    elif data[pc][-7:] == '1100011' and data[pc][-15:-12] == '111':
+        b_bgeu(data[pc])
+        
+    elif data[pc][-7:] == '0110111':
+        u_lui(data[pc])
+        
+    elif data[pc][-7:] == '0010111':
+        u_aupic(data[pc])
+        
+    elif data[pc][-7:] == '1101111':
+        j_jal(data[pc])
+          
     pc += 1
