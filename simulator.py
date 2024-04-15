@@ -67,6 +67,45 @@ def r_and(data):
 def i_lw(data):
     return None
 
+def i_addi(data):
+    return None
+
+def i_sltiu(data):
+    return None
+
+def i_jalr(data):
+    return None
+
+def s_sw(data):
+    return None
+
+def b_beq(data):
+    return None
+
+def b_bne(data):
+    return None
+
+def b_blt(data):
+    return None
+
+def b_bge(data):
+    return None
+
+def b_bltu(data):
+    return None
+
+def b_bgeu(data):
+    return None
+
+def u_aupic(data):
+    return None
+
+def u_lui(data):
+    return None
+
+def j_jal(data):
+    return None
+
 pc = 0
 while pc < len(data):
     if data[pc][-7:] == '0110011' and data[pc][-15:-12] == '000' and data[pc][-32:-25] == '0000000':
@@ -74,5 +113,26 @@ while pc < len(data):
     
     elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '000' and data[pc][-32:-25] == '0100000':
         r_sub(data[pc])
+        
+    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '001' and data[pc][-32:-25] == '0000000':
+        r_sll(data[pc])
+    
+    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '010' and data[pc][-32:-25] == '0000000':
+        r_slt(data[pc])
+        
+    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '011' and data[pc][-32:-25] == '0000000':
+        r_sltu(data[pc])
+    
+    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '100' and data[pc][-32:-25] == '0000000':
+        r_xor(data[pc])
+    
+    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '101' and data[pc][-32:-25] == '0000000':
+        r_srl(data[pc])
+        
+    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '110' and data[pc][-32:-25] == '0000000':
+        r_or(data[pc])
+        
+    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '111' and data[pc][-32:-25] == '0000000':
+        r_and(data[pc])
     
     pc += 1
