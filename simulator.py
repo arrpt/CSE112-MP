@@ -1,4 +1,6 @@
 #! /usr/bin/env python3
+import sys
+
 f = open('test1.txt', 'r')
 data = f.readlines()
 abi2register = {
@@ -176,5 +178,9 @@ while pc < len(data):
         
     elif data[pc][-7:] == '1101111':
         j_jal(data[pc])
+        
+    else:
+        print("Illegal instruction")
+        sys.exit()
           
     pc += 1
