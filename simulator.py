@@ -51,5 +51,4 @@ while pc < len(data):
     elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '000' and data[pc][-32:-25] == '0100000':
         r_sub(data[pc])
     
-    
     pc += 1
