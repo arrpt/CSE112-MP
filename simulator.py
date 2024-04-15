@@ -37,19 +37,19 @@ abi2register = {
     "x31": 0,
 }
 
-def s_add(data):
+def r_add(data):
     return None
 
-def s_sub(data):
+def r_sub(data):
     return None
 
 pc = 0
 while pc < len(data):
     if data[pc][-7:] == '0110011' and data[pc][-15:-12] == '000' and data[pc][-32:-25] == '0000000':
-        s_add(data[pc])
+        r_add(data[pc])
     
     elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '000' and data[pc][-32:-25] == '0100000':
-        s_sub(data[pc])
+        r_sub(data[pc])
     
     
     pc += 1

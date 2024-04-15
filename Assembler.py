@@ -200,16 +200,22 @@ def J_jal(rd, imm):
     return immf[-20]+immf[-10:]+immf[-11]+immf[-19:-11]+registerSext(rd)+opcode
 
 def Bonus_mul(rd, rs1, rs2):
-    opcode = ''
+    opcode = '0110011'  
+    funct7 = '0000001'  
+    funct3 = '000'
+    return funct7 + registerSext(rs2) + registerSext(rs1) + funct3 + registerSext(rd) + opcode
 
 def Bonus_rst():
-    opcode = ''
+    opcode = '00000000000000000000000000000000'  
+    return opcode
 
 def Bonus_halt():
     return B_beq('x0', 'x0', '0')
 
 def Bonus_rvrs(rd, rs):
-    opcode = ''
+    opcode = '0001011' 
+    funct3 = '000'     
+    return immExt_for12bits('0') + registerSext(rs) + funct3 + registerSext(rd) + opcode
 
 abi2register = {
     "zero": "x0",
@@ -578,6 +584,8 @@ for i in range(len(data)):
             Bonus_halt()
         case "rvrs":
             Bonus_rvrs()   
+        case "rst":
+            Bonus_rst()
         case _:
             print(f'ILLEGAL OPERANDS AT LINE {i+1}')
             sys.exit()
