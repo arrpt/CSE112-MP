@@ -43,6 +43,30 @@ def r_add(data):
 def r_sub(data):
     return None
 
+def r_sll(data):
+    return None
+
+def r_slt(data):
+    return None
+
+def r_sltu(data):
+    return None
+
+def r_xor(data):
+    return None
+
+def r_srl(data):
+    return None
+
+def r_or(data):
+    return None
+
+def r_and(data):
+    return None
+
+def i_lw(data):
+    return None
+
 pc = 0
 while pc < len(data):
     if data[pc][-7:] == '0110011' and data[pc][-15:-12] == '000' and data[pc][-32:-25] == '0000000':
