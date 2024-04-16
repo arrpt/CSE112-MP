@@ -39,46 +39,103 @@ abi2register = {
     "x31": 0,
 }
 
+def func(r):#binary in string -> x(int) in string
+    return f"x{int(r,2)}"#"100" 100 
+
+def sign_extend(value, bits):
+    mask = 1 << (bits - 1)
+    return (value & ((1 << bits) - 1)) - (value & mask)
+
 def r_add(data):
+    rd = func(data[-12:-7])
+    rs1 = func(data[-20:-15])
+    rs2 = func(data[-25:-20])
+    abi2register[rd] = abi2register[rs1] + abi2register[rs2]
     return None
 
 def r_sub(data):
+    rd = func(data[-12:-7])
+    rs1 = func(data[-20:-15])
+    rs2 = func(data[-25:-20])
+    abi2register[rd] = abi2register[rs1] - abi2register[rs2]
     return None
 
 def r_sll(data):
+
     return None
 
 def r_slt(data):
+    rd = func(data[-12:-7])
+    rs1 = func(data[-20:-15])
+    rs2 = func(data[-25:-20])
+    if abi2register[rs1]<abi2register[rs2]:
+        abi2register[rd]=1
     return None
 
 def r_sltu(data):
+    rd = func(data[-12:-7])
+    rs1 = func(data[-20:-15])
+    rs2 = func(data[-25:-20])
+    if abi2register[rs1] < abi2register[rs2] :
+        abi2register[rd] = 1 
     return None
 
 def r_xor(data):
+    rd = func(data[-12:-7])
+    rs1 = func(data[-20:-15])
+    rs2 = func(data[-25:-20])
+    abi2register[rd] = abi2register[rs1] ^ abi2register[rs2]
     return None
 
 def r_srl(data):
     return None
 
 def r_or(data):
+    rd = func(data[-12:-7])
+    rs1 = func(data[-20:-15])
+    rs2 = func(data[-25:-20])
+    abi2register[rd] = abi2register[rs1] | abi2register[rs2]
     return None
 
 def r_and(data):
+    rd = func(data[-12:-7])
+    rs1 = func(data[-20:-15])
+    rs2 = func(data[-25:-20])
+    abi2register[rd] = abi2register[rs1] & abi2register[rs2]
     return None
 
-def i_lw(data):
+def i_lw(data):#doubt
+    immd = sign_extend(int(data[-31:-20],2),12)
+    rs1 = func(data[-20:-15])
+    rd = func(data[-12:-7])
+    abi2register[rd] = abi2register[rs1] + immd
     return None
 
 def i_addi(data):
+    imm = sign_extend(int(data[-31:-20], 2), 12) 
+    rs1 = func(data[-20:-15]) 
+    rd = func(data[-12:-7]) 
+    abi2register[rd] = abi2register[rs1] + imm  
     return None
 
 def i_sltiu(data):
+    imm = sign_extend(int(data[-31:-20], 2), 12) 
+    rs1 = func(data[-20:-15]) 
+    rd = func(data[-12:-7]) 
+    if abi2register[rs1] < imm :
+        abi2register[rd] =1
     return None
 
-def i_jalr(data):
+def i_jalr(data):#doubt
+    rd = pc + 4
+
     return None
 
-def s_sw(data):
+def s_sw(data):#doubt 
+    imm = sign_extend(int(data[-31:-25]+data[-12:-7], 2), 12) 
+    rs2 = func(data[-25:-20])
+    rs1 = func(data[-20:-15]) 
+
     return None
 
 def b_beq(data):
