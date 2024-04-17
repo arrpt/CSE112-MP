@@ -3,6 +3,7 @@ import sys
 
 f = open('test1.txt', 'r')
 data = f.readlines()
+pc = 0
 register = {
     "00000": '00000000000000000000000000000000',
     "00001": '00000000000000000000000000000000',
@@ -98,7 +99,7 @@ def binary2sint(binary: str) -> int:
         return int(binary, 2) - (1 << 32)
 
 def sext(binary: str) -> str:
-    if binary[0] == 0:
+    if binary[0] == "0":
         return 0*(32-len(binary)) + binary
     else:
         return 1*(32-len(binary)) + binary
@@ -186,14 +187,14 @@ def r_and(data):
 def i_lw(data):
     rs1 = data[-20:-15]
     rd = data[-12:-7]
-    imm = data[-32:20]
+    imm = data[-32:-20]
     register[rd] = memory[binary2uint[(register[rs1] + sext(imm))]]
     return
 
 def i_addi(data):
     rs1 = data[-20:-15]
     rd = data[-12:-7]
-    imm = data[-32:20]
+    imm = data[-32:-20]
     out = binary2sint(register[rs1]) + binary2sint(sext(imm))
     register[rd] = int2binary(out)
     return 
@@ -201,7 +202,7 @@ def i_addi(data):
 def i_sltiu(data):
     rs1 = data[-20:-15]
     rd = data[-12:-7]
-    imm = data[-32:20]
+    imm = data[-32:-20]
     if binary2uint(register[rs1]) < binary2uint(sext(imm)):
         register[rd] = int2binary(1)
     else:
@@ -210,7 +211,7 @@ def i_sltiu(data):
 
 def i_jalr(data):
     rd = data[-12:-7]
-    offset = data[-32:20]
+    offset = data[-32:-20]
     out = int2binary((pc+1)*4)
     pc = binary2sint(register["00110"]) + (binary2sint(offset))//4
     return 
@@ -298,7 +299,6 @@ def j_jal(data):
     pc = pc + (binary2sint(sext(imm)))//4 - 1
     return 
 
-pc = 0
 while pc < len(data):
     if data[pc][-7:] == '0110011' and data[pc][-15:-12] == '000' and data[pc][-32:-25] == '0000000':
         r_add(data[pc])
