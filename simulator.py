@@ -131,38 +131,19 @@ def r_and(data):
     register[rd] = out
     return
 
-def i_lw(data):#doubt
-    immd = sign_extend(int(data[-31:-20],2),12)
-    rs1 = func(data[-20:-15])
-    rd = func(data[-12:-7])
-    abi2register[rd] = abi2register[rs1] + immd
+def i_lw(data):
     return None
 
 def i_addi(data):
-    imm = sign_extend(int(data[-31:-20], 2), 12) 
-    rs1 = func(data[-20:-15]) 
-    rd = func(data[-12:-7]) 
-    abi2register[rd] = abi2register[rs1] + imm  
     return None
 
 def i_sltiu(data):
-    imm = sign_extend(int(data[-31:-20], 2), 12) 
-    rs1 = func(data[-20:-15]) 
-    rd = func(data[-12:-7]) 
-    if abi2register[rs1] < imm :
-        abi2register[rd] =1
     return None
 
-def i_jalr(data):#doubt
-    rd = pc + 4
-
+def i_jalr(data):
     return None
 
-def s_sw(data):#doubt 
-    imm = sign_extend(int(data[-31:-25]+data[-12:-7], 2), 12) 
-    rs2 = func(data[-25:-20])
-    rs1 = func(data[-20:-15]) 
-
+def s_sw(data): 
     return None
 
 def b_beq(data):
