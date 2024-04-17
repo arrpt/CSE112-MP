@@ -73,6 +73,18 @@ memory = {
     65660 : '00000000000000000000000000000000'
 }
 
+def dump():
+    global pc
+    print(int2binary(pc*4), end=' ')
+    for x in list(register.values()):
+        print(x, end=' ')
+    print()
+
+def halt():
+    for x in list(memory.values()):
+        print(x, end=' ')
+    print()
+
 def int2binary(num: int) -> str:
     return format(2**32 + num, 'b')[-32:]
 
