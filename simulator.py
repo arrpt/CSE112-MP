@@ -137,16 +137,36 @@ def r_and(data):
     return
 
 def i_lw(data):
+    rs1 = data[-20:-15]
+    rd = data[-12:-7]
+    imm = data[-32:20]
+
     return None
 
 def i_addi(data):
-    return None
+    rs1 = data[-20:-15]
+    rd = data[-12:-7]
+    imm = data[-32:20]
+    out = binary2sint(register[rs1]) + binary2sint(sext(imm))
+    register[rd] = int2binary(out)
+    return 
 
 def i_sltiu(data):
-    return None
+    rs1 = data[-20:-15]
+    rd = data[-12:-7]
+    imm = data[-32:20]
+    if binary2uint(register[rs1]) < binary2uint(sext(imm)):
+        register[rd] = int2binary(1)
+    else:
+        register[rd] = int2binary(0)
+    return 
 
 def i_jalr(data):
-    return None
+    rd = data[-12:-7]
+    offset = data[-32:20]
+    out = int2binary((pc+1)*4)
+    pc = binary2sint(register["00110"]) + (binary2sint(offset))//4
+    return 
 
 def s_sw(data): 
     return None
@@ -206,13 +226,25 @@ def b_bgeu(data):
     return
 
 def u_aupic(data):
-    return None
+    imm = data[-32:-12]
+    rd = data[-12:-7]
+    out = (pc + binary2sint(sext(imm)))*4
+    register[rd] = int2binary(out)
+    return 
 
 def u_lui(data):
-    return None
+    imm = data[-32:-12]
+    rd = data[-12:-7]
+    out = binary2sint(sext(imm))*4
+    register[rd] = int2binary(out)
+    return 
 
 def j_jal(data):
-    return None
+    imm = data[-20] + data[-11:-1] + data[-11] + data[-20:-12]
+    rd = data[-12:-7]
+    out = int2binary((pc+1)*4)
+    pc = pc + (binary2sint(imm))//4
+    return 
 
 pc = 0
 while pc < len(data):
