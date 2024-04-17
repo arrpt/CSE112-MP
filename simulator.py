@@ -156,7 +156,7 @@ def b_beq(data):
     rs1 = data[-20:-15]
     rs2 = data[-25:-20]
     imm = data[-32]+data[-8]+data[-31:-25]+data[-12:-8]
-    if register[rs1] == register[rs2]:
+    if binary2sint(register[rs1]) == binary2sint(register[rs2]):
         pc += binary2sint(sext(imm))//4 - 1
     return
 
@@ -165,7 +165,7 @@ def b_bne(data):
     rs1 = data[-20:-15]
     rs2 = data[-25:-20]
     imm = data[-32]+data[-8]+data[-31:-25]+data[-12:-8]
-    if register[rs1] != register[rs2]:
+    if binary2sint(register[rs1]) != binary2sint(register[rs2]):
         pc += binary2sint(sext(imm))//4 - 1
     return
 
@@ -174,7 +174,7 @@ def b_blt(data):
     rs1 = data[-20:-15]
     rs2 = data[-25:-20]
     imm = data[-32]+data[-8]+data[-31:-25]+data[-12:-8]
-    if register[rs1] < register[rs2]:
+    if binary2sint(register[rs1]) < binary2sint(register[rs2]):
         pc += binary2sint(sext(imm))//4 - 1
     return
 
@@ -183,7 +183,7 @@ def b_bge(data):
     rs1 = data[-20:-15]
     rs2 = data[-25:-20]
     imm = data[-32]+data[-8]+data[-31:-25]+data[-12:-8]
-    if register[rs1] >= register[rs2]:
+    if binary2sint(register[rs1]) >= binary2sint(register[rs2]):
         pc += binary2sint(sext(imm))//4 - 1
     return
 
@@ -192,7 +192,7 @@ def b_bltu(data):
     rs1 = data[-20:-15]
     rs2 = data[-25:-20]
     imm = data[-32]+data[-8]+data[-31:-25]+data[-12:-8]
-    if register[rs1] < register[rs2]:
+    if binary2uint(register[rs1]) < binary2uint(register[rs2]):
         pc += binary2sint(sext(imm))//4 - 1
     return
 
