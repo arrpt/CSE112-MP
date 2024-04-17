@@ -197,10 +197,13 @@ def b_bltu(data):
     return
 
 def b_bgeu(data):
+    global pc
     rs1 = data[-20:-15]
-    rs1 = data[-25:-20]
+    rs2 = data[-25:-20]
     imm = data[-32]+data[-8]+data[-31:-25]+data[-12:-8]
-    return None
+    if binary2uint(register[rs1]) >= binary2uint(register[rs2]):
+        pc += binary2sint(sext(imm))//4 - 1
+    return
 
 def u_aupic(data):
     return None
