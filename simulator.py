@@ -240,7 +240,7 @@ def u_lui(data):
     return 
 
 def j_jal(data):
-    imm = data[-20] + data[-11:-1] + data[-11] + data[-20:-12]
+    imm = data[-32] + data[-22:-12] + data[-23] + data[-31:-23]
     rd = data[-12:-7]
     out = int2binary((pc+1)*4)
     pc = pc + (binary2sint(imm))//4
