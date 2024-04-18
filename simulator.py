@@ -212,9 +212,11 @@ def i_sltiu(data):
     return 
 
 def i_jalr(data):
+    global pc
     rd = data[-12:-7]
     offset = data[-32:-20]
     out = int2binary((pc+1)*4)
+    register[rd] = out
     pc = binary2sint(register["00110"]) + (binary2sint(offset))//4
     return 
 
@@ -298,6 +300,7 @@ def j_jal(data):
     imm = data[-32] + data[-22:-12] + data[-23] + data[-31:-23]
     rd = data[-12:-7]
     out = int2binary((pc+1)*4)
+    register[rd] = out
     pc = pc + (binary2sint(sext(imm)))//4
     return 
 
@@ -306,45 +309,58 @@ while pc < len(data):
     #print(query)
     if query[-7:] == '0110011' and query[-15:-12] == '000' and query[-32:-25] == '0000000':
         r_add(query)
+        pc += 1
 
     elif query[-7:] == '0110011' and query[-15:-12] == '000' and query[-32:-25] == '0100000':
         r_sub(query)
+        pc += 1
 
     elif query[-7:] == '0110011' and query[-15:-12] == '001' and query[-32:-25] == '0000000':
         r_sll(query)
+        pc += 1
 
     elif query[-7:] == '0110011' and query[-15:-12] == '010' and query[-32:-25] == '0000000':
         r_slt(query)
+        pc += 1
 
     elif query[-7:] == '0110011' and query[-15:-12] == '011' and query[-32:-25] == '0000000':
         r_sltu(query)
+        pc += 1
 
     elif query[-7:] == '0110011' and query[-15:-12] == '100' and query[-32:-25] == '0000000':
         r_xor(query)
+        pc += 1
 
     elif query[-7:] == '0110011' and query[-15:-12] == '101' and query[-32:-25] == '0000000':
         r_srl(query)
+        pc += 1
 
     elif query[-7:] == '0110011' and query[-15:-12] == '110' and query[-32:-25] == '0000000':
         r_or(query)
+        pc += 1
 
     elif query[-7:] == '0110011' and query[-15:-12] == '111' and query[-32:-25] == '0000000':
         r_and(query)
+        pc += 1
 
     elif query[-7:] == '0000011' and query[-15:-12] == '010':
         i_lw(query)
+        pc += 1
 
     elif query[-7:] == '0010011' and query[-15:-12] == '000':
         i_addi(query)
+        pc += 1
         
     elif query[-7:] == '0000011' and query[-15:-12] == '011':
         i_sltiu(query)
+        pc += 1
 
     elif query[-7:] == '1100111' and query[-15:-12] == '000':
         i_jalr(query)
 
     elif query[-7:] == '0100011' and query[-15:-12] == '010':
         s_sw(query)
+        pc += 1
 
     elif query[-7:] == '1100011' and query[-15:-12] == '000':
         if query == "00000000000000000000000001100011":
@@ -369,9 +385,11 @@ while pc < len(data):
 
     elif query[-7:] == '0110111':
         u_lui(query)
+        pc += 1
 
     elif query[-7:] == '0010111':
         u_aupic(query)
+        pc += 1
 
     elif query[-7:] == '1101111':
         j_jal(query)
@@ -379,7 +397,6 @@ while pc < len(data):
     else:
         print(f"Illegal instruction at line {pc + 1}")
         sys.exit()
-    #print(pc)
-    #time.sleep(2)     
-    pc += 1
-    dump()
+    print(pc)
+    time.sleep(1)
+    #dump()
