@@ -2,7 +2,8 @@
 import sys
 import time
 
-f = open('test1.txt', 'r')
+f = open(sys.argv[1], 'r')
+g = open(sys.argv[2], 'w')
 data = f.readlines()
 pc = 0
 
@@ -78,14 +79,17 @@ memory = {
 
 def dump():
     global pc
-    print('0b'+int2binary(pc*4), end=' ')
+    g.write('0b'+int2binary(pc*4)+' ')
     for x in list(register.values()):
-        print('0b'+x, end=' ')
-    print()
+        g.write('0b'+x+' ')
+        #print('0b'+x, end=' ')
+    g.write('\n')
+    #print()
 
 def halt():
     for i in range(len(list(memory.keys()))):
-        print('0x{0:08X}'.format(list(memory.keys())[i])+': 0b'+list(memory.values())[i])
+        g.write('0x{0:08X}'.format(list(memory.keys())[i])+': 0b'+list(memory.values())[i]+'\n')
+        #print('0x{0:08X}'.format(list(memory.keys())[i])+': 0b'+list(memory.values())[i])
     sys.exit()
 
 def int2binary(num: int) -> str:
@@ -303,7 +307,6 @@ def j_jal(data):
 
 while pc < len(data):
     query = data[pc].strip()
-    #print(query)
     if query[-7:] == '0110011' and query[-15:-12] == '000' and query[-32:-25] == '0000000':
         r_add(query)
 
@@ -378,8 +381,9 @@ while pc < len(data):
         
     else:
         print(f"Illegal instruction at line {pc + 1}")
-        sys.exit()
-    #print(pc)
-    #time.sleep(2)     
+        sys.exit()  
     pc += 1
     dump()
+
+f.close()
+g.close()
