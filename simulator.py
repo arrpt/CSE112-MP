@@ -379,7 +379,7 @@ while pc < len(data):
     else:
         print(f"Illegal instruction at line {pc + 1}")
         sys.exit()
-    print(pc)
+    #print(pc)
     #time.sleep(2)     
     pc += 1
-    #dump()
+    dump()
