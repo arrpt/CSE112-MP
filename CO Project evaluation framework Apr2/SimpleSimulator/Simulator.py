@@ -216,10 +216,12 @@ def i_sltiu(data):
     return 
 
 def i_jalr(data):
+    rs1 = data[-20:-15]
     rd = data[-12:-7]
     offset = data[-32:-20]
     out = int2binary((pc+1)*4)
-    pc = binary2sint(register["00110"]) + (binary2sint(offset))//4
+    pc = binary2sint(register[rs1]) + (binary2sint(offset))//4
+    register[rd] = out
     return 
 
 def s_sw(data):
