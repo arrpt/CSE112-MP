@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 import sys
+import time
 
 f = open('test1.txt', 'r')
 data = f.readlines()
@@ -198,7 +199,7 @@ def i_addi(data):
     imm = data[-32:-20]
     out = binary2sint(register[rs1]) + binary2sint(sext(imm))
     register[rd] = int2binary(out)
-    return 
+    return
 
 def i_sltiu(data):
     rs1 = data[-20:-15]
@@ -230,7 +231,7 @@ def b_beq(data):
     rs2 = data[-25:-20]
     imm = data[-32]+data[-8]+data[-31:-25]+data[-12:-8]
     if binary2sint(register[rs1]) == binary2sint(register[rs2]):
-        pc += binary2sint(sext(imm))//4 - 1
+        pc += binary2sint(sext(imm))//4
     return
 
 def b_bne(data):
@@ -239,7 +240,7 @@ def b_bne(data):
     rs2 = data[-25:-20]
     imm = data[-32]+data[-8]+data[-31:-25]+data[-12:-8]
     if binary2sint(register[rs1]) != binary2sint(register[rs2]):
-        pc += binary2sint(sext(imm))//4 - 1
+        pc += binary2sint(sext(imm))//4
     return
 
 def b_blt(data):
@@ -248,7 +249,7 @@ def b_blt(data):
     rs2 = data[-25:-20]
     imm = data[-32]+data[-8]+data[-31:-25]+data[-12:-8]
     if binary2sint(register[rs1]) < binary2sint(register[rs2]):
-        pc += binary2sint(sext(imm))//4 - 1
+        pc += binary2sint(sext(imm))//4
     return
 
 def b_bge(data):
@@ -257,7 +258,7 @@ def b_bge(data):
     rs2 = data[-25:-20]
     imm = data[-32]+data[-8]+data[-31:-25]+data[-12:-8]
     if binary2sint(register[rs1]) >= binary2sint(register[rs2]):
-        pc += binary2sint(sext(imm))//4 - 1
+        pc += binary2sint(sext(imm))//4
     return
 
 def b_bltu(data):
@@ -266,7 +267,7 @@ def b_bltu(data):
     rs2 = data[-25:-20]
     imm = data[-32]+data[-8]+data[-31:-25]+data[-12:-8]
     if binary2uint(register[rs1]) < binary2uint(register[rs2]):
-        pc += binary2sint(sext(imm))//4 - 1
+        pc += binary2sint(sext(imm))//4
     return
 
 def b_bgeu(data):
@@ -275,7 +276,7 @@ def b_bgeu(data):
     rs2 = data[-25:-20]
     imm = data[-32]+data[-8]+data[-31:-25]+data[-12:-8]
     if binary2uint(register[rs1]) >= binary2uint(register[rs2]):
-        pc += binary2sint(sext(imm))//4 - 1
+        pc += binary2sint(sext(imm))//4
     return
 
 def u_aupic(data):
@@ -297,11 +298,12 @@ def j_jal(data):
     imm = data[-32] + data[-22:-12] + data[-23] + data[-31:-23]
     rd = data[-12:-7]
     out = int2binary((pc+1)*4)
-    pc = pc + (binary2sint(sext(imm)))//4 - 1
+    pc = pc + (binary2sint(sext(imm)))//4
     return 
 
 while pc < len(data):
     query = data[pc].strip()
+    #print(query)
     if query[-7:] == '0110011' and query[-15:-12] == '000' and query[-32:-25] == '0000000':
         r_add(query)
 
@@ -375,9 +377,9 @@ while pc < len(data):
         j_jal(query)
         
     else:
-        print(pc)
-        print("Illegal instruction")
+        print(f"Illegal instruction at line {pc + 1}")
         sys.exit()
-          
+    #print(pc)
+    #time.sleep(2)     
     pc += 1
     dump()
