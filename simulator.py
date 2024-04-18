@@ -77,9 +77,9 @@ memory = {
 
 def dump():
     global pc
-    print(int2binary(pc*4), end=' ')
+    print('0b'+int2binary(pc*4), end=' ')
     for x in list(register.values()):
-        print(x, end=' ')
+        print('0b'+x, end=' ')
     print()
 
 def halt():
@@ -380,3 +380,4 @@ while pc < len(data):
         sys.exit()
           
     pc += 1
+    dump()
