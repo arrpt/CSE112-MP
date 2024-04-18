@@ -4,6 +4,7 @@ import sys
 f = open('test1.txt', 'r')
 data = f.readlines()
 pc = 0
+
 register = {
     "00000": '00000000000000000000000000000000',
     "00001": '00000000000000000000000000000000',
@@ -82,9 +83,9 @@ def dump():
     print()
 
 def halt():
-    for x in list(memory.values()):
-        print(x, end=' ')
-    print()
+    for i in range(len(list(memory.keys()))):
+        print('0x{0:08X}'.format(list(memory.keys())[i])+': 0b'+list(memory.values())[i])
+    sys.exit()
 
 def int2binary(num: int) -> str:
     return format(2**32 + num, 'b')[-32:]
@@ -100,9 +101,9 @@ def binary2sint(binary: str) -> int:
 
 def sext(binary: str) -> str:
     if binary[0] == "0":
-        return 0*(32-len(binary)) + binary
+        return '0'*(32-len(binary)) + binary
     else:
-        return 1*(32-len(binary)) + binary
+        return '1'*(32-len(binary)) + binary
 
 def r_add(data):
     rd = data[-12:-7]
@@ -188,7 +189,7 @@ def i_lw(data):
     rs1 = data[-20:-15]
     rd = data[-12:-7]
     imm = data[-32:-20]
-    register[rd] = memory[binary2uint[(register[rs1] + sext(imm))]]
+    register[rd] = memory[binary2sint(register[rs1]) + binary2sint(sext(imm))]
     return
 
 def i_addi(data):
@@ -216,11 +217,11 @@ def i_jalr(data):
     pc = binary2sint(register["00110"]) + (binary2sint(offset))//4
     return 
 
-def s_sw(data): 
+def s_sw(data):
     rs1 = data[-20:-15]
     rs2 = data[-25:-20]
-    imm = data[-11:-25] + data[-12:-7]
-    memory[binary2uint[(register[rs1] + sext(imm))]] = register[rs2]
+    imm = data[-31:-25] + data[-12:-7]
+    memory[binary2sint(register[rs1]) + binary2sint(sext(imm))] = register[rs2]
     return
 
 def b_beq(data):
@@ -300,76 +301,81 @@ def j_jal(data):
     return 
 
 while pc < len(data):
-    if data[pc][-7:] == '0110011' and data[pc][-15:-12] == '000' and data[pc][-32:-25] == '0000000':
-        r_add(data[pc])
-    
-    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '000' and data[pc][-32:-25] == '0100000':
-        r_sub(data[pc])
-        
-    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '001' and data[pc][-32:-25] == '0000000':
-        r_sll(data[pc])
-    
-    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '010' and data[pc][-32:-25] == '0000000':
-        r_slt(data[pc])
-        
-    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '011' and data[pc][-32:-25] == '0000000':
-        r_sltu(data[pc])
-    
-    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '100' and data[pc][-32:-25] == '0000000':
-        r_xor(data[pc])
-    
-    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '101' and data[pc][-32:-25] == '0000000':
-        r_srl(data[pc])
-        
-    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '110' and data[pc][-32:-25] == '0000000':
-        r_or(data[pc])
-        
-    elif data[pc][-7:] == '0110011' and data[pc][-15:-12] == '111' and data[pc][-32:-25] == '0000000':
-        r_and(data[pc])
-    
-    elif data[pc][-7:] == '0000011' and data[pc][-15:-12] == '010':
-        i_lw(data[pc])
+    query = data[pc].strip()
+    if query[-7:] == '0110011' and query[-15:-12] == '000' and query[-32:-25] == '0000000':
+        r_add(query)
 
-    elif data[pc][-7:] == '0010011' and data[pc][-15:-12] == '000':
-        i_addi(data[pc])
+    elif query[-7:] == '0110011' and query[-15:-12] == '000' and query[-32:-25] == '0100000':
+        r_sub(query)
+
+    elif query[-7:] == '0110011' and query[-15:-12] == '001' and query[-32:-25] == '0000000':
+        r_sll(query)
+
+    elif query[-7:] == '0110011' and query[-15:-12] == '010' and query[-32:-25] == '0000000':
+        r_slt(query)
+
+    elif query[-7:] == '0110011' and query[-15:-12] == '011' and query[-32:-25] == '0000000':
+        r_sltu(query)
+
+    elif query[-7:] == '0110011' and query[-15:-12] == '100' and query[-32:-25] == '0000000':
+        r_xor(query)
+
+    elif query[-7:] == '0110011' and query[-15:-12] == '101' and query[-32:-25] == '0000000':
+        r_srl(query)
+
+    elif query[-7:] == '0110011' and query[-15:-12] == '110' and query[-32:-25] == '0000000':
+        r_or(query)
+
+    elif query[-7:] == '0110011' and query[-15:-12] == '111' and query[-32:-25] == '0000000':
+        r_and(query)
+
+    elif query[-7:] == '0000011' and query[-15:-12] == '010':
+        i_lw(query)
+
+    elif query[-7:] == '0010011' and query[-15:-12] == '000':
+        i_addi(query)
         
-    elif data[pc][-7:] == '0000011' and data[pc][-15:-12] == '011':
-        i_sltiu(data[pc])
-        
-    elif data[pc][-7:] == '1100111' and data[pc][-15:-12] == '000':
-        i_jalr(data[pc])
-        
-    elif data[pc][-7:] == '0100011' and data[pc][-15:-12] == '010':
-        s_sw(data[pc])
-        
-    elif data[pc][-7:] == '1100011' and data[pc][-15:-12] == '000':
-        b_beq(data[pc])
-    
-    elif data[pc][-7:] == '1100011' and data[pc][-15:-12] == '001':
-        b_bne(data[pc])
-        
-    elif data[pc][-7:] == '1100011' and data[pc][-15:-12] == '100':
-        b_blt(data[pc])
-        
-    elif data[pc][-7:] == '1100011' and data[pc][-15:-12] == '101':
-        b_bge(data[pc])
-        
-    elif data[pc][-7:] == '1100011' and data[pc][-15:-12] == '110':
-        b_bltu(data[pc])
-        
-    elif data[pc][-7:] == '1100011' and data[pc][-15:-12] == '111':
-        b_bgeu(data[pc])
-        
-    elif data[pc][-7:] == '0110111':
-        u_lui(data[pc])
-        
-    elif data[pc][-7:] == '0010111':
-        u_aupic(data[pc])
-        
-    elif data[pc][-7:] == '1101111':
-        j_jal(data[pc])
+    elif query[-7:] == '0000011' and query[-15:-12] == '011':
+        i_sltiu(query)
+
+    elif query[-7:] == '1100111' and query[-15:-12] == '000':
+        i_jalr(query)
+
+    elif query[-7:] == '0100011' and query[-15:-12] == '010':
+        s_sw(query)
+
+    elif query[-7:] == '1100011' and query[-15:-12] == '000':
+        if query == "00000000000000000000000001100011":
+            halt()
+        else:
+            b_beq(query)
+
+    elif query[-7:] == '1100011' and query[-15:-12] == '001':
+        b_bne(query)
+
+    elif query[-7:] == '1100011' and query[-15:-12] == '100':
+        b_blt(query)
+
+    elif query[-7:] == '1100011' and query[-15:-12] == '101':
+        b_bge(query)
+
+    elif query[-7:] == '1100011' and query[-15:-12] == '110':
+        b_bltu(query)
+
+    elif query[-7:] == '1100011' and query[-15:-12] == '111':
+        b_bgeu(query)
+
+    elif query[-7:] == '0110111':
+        u_lui(query)
+
+    elif query[-7:] == '0010111':
+        u_aupic(query)
+
+    elif query[-7:] == '1101111':
+        j_jal(query)
         
     else:
+        print(pc)
         print("Illegal instruction")
         sys.exit()
           
